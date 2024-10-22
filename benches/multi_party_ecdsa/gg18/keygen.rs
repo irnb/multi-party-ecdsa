@@ -19,6 +19,8 @@ mod bench {
             })
         });
     }
+
+    #[allow(clippy::type_complexity)]
     pub fn keygen_t_n_parties(
         t: u16,
         n: u16,
@@ -89,7 +91,7 @@ mod bench {
                     &y_vec,
                     &party_shares[i],
                     &vss_scheme_vec,
-                    (&index_vec[i] + 1),
+                    &index_vec[i] + 1,
                 )
                 .expect("invalid vss");
             shared_keys_vec.push(shared_keys);
