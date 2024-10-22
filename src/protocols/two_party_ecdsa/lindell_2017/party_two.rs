@@ -86,9 +86,13 @@ pub struct Party2Private {
 pub struct PDLchallenge {
     pub c_tag: BigInt,
     pub c_tag_tag: BigInt,
+    #[allow(dead_code)]
     a: BigInt,
+    #[allow(dead_code)]
     b: BigInt,
+    #[allow(dead_code)]
     blindness: BigInt,
+    #[allow(dead_code)]
     q_tag: Point<Secp256k1>,
 }
 
@@ -422,3 +426,4 @@ impl PartialSig {
         }
     }
 }
+

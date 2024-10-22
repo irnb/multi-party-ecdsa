@@ -70,81 +70,81 @@ fn test_sign_n8_t4_ttag6() {
 #[test]
 fn test_sign_n2_t1_ttag1_corrupt_step5_party1() {
     let res = sign(1, 2, 2, vec![0, 1], 5, &[0]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[0])
+    assert!(res.err().unwrap().bad_actors[..] == [0])
 }
 
 // party 2 is corrupting step 5
 #[test]
 fn test_sign_n2_t1_ttag1_corrupt_step5_party2() {
     let res = sign(1, 2, 2, vec![0, 1], 5, &[1]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[1])
+    assert!(res.err().unwrap().bad_actors[..] == [1])
 }
 
 // both parties are corrupting step 5
 #[test]
 fn test_sign_n2_t1_ttag1_corrupt_step5_party12() {
     let res = sign(1, 2, 2, vec![0, 1], 5, &[0, 1]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[0, 1])
+    assert!(res.err().unwrap().bad_actors[..] == [0, 1])
 }
 // party 1 is corrupted
 #[test]
 fn test_sign_n5_t2_ttag4_corrupt_step5_party1() {
     let res = sign(2, 5, 4, vec![0, 2, 3, 4], 5, &[0]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[0])
+    assert!(res.err().unwrap().bad_actors[..] == [0])
 }
 
 // party 1,4 are corrupted
 #[test]
 fn test_sign_n5_t2_ttag4_corrupt_step5_party14() {
     let res = sign(2, 5, 4, vec![0, 2, 3, 4], 5, &[0, 3]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[0, 3])
+    assert!(res.err().unwrap().bad_actors[..] == [0, 3])
 }
 
 // party 1 is corrupting step 6
 #[test]
 fn test_sign_n2_t1_ttag1_corrupt_step6_party1() {
     let res = sign(1, 2, 2, vec![0, 1], 6, &[0]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[0])
+    assert!(res.err().unwrap().bad_actors[..] == [0])
 }
 // party 2 is corrupting step 6
 #[test]
 fn test_sign_n2_t1_ttag1_corrupt_step6_party2() {
     let res = sign(1, 2, 2, vec![0, 1], 6, &[1]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[1])
+    assert!(res.err().unwrap().bad_actors[..] == [1])
 }
 
 // both parties are corrupting step 6
 #[test]
 fn test_sign_n2_t1_ttag1_corrupt_step6_party12() {
     let res = sign(1, 2, 2, vec![0, 1], 6, &[0, 1]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[0, 1])
+    assert!(res.err().unwrap().bad_actors[..] == [0, 1])
 }
 // party 1 is corrupted
 #[test]
 fn test_sign_n5_t2_ttag4_corrupt_step6_party1() {
     let res = sign(2, 5, 4, vec![0, 2, 3, 4], 6, &[0]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[0])
+    assert!(res.err().unwrap().bad_actors[..] == [0])
 }
 
 // party 1,4 are corrupted
 #[test]
 fn test_sign_n5_t2_ttag4_corrupt_step6_party14() {
     let res = sign(2, 5, 4, vec![0, 2, 3, 4], 6, &[0, 3]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[0, 3])
+    assert!(res.err().unwrap().bad_actors[..] == [0, 3])
 }
 
 // party 1 is corrupting step 5
 #[test]
 fn test_sign_n2_t1_ttag1_corrupt_step7_party2() {
     let res = sign(1, 2, 2, vec![0, 1], 7, &[1]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[1])
+    assert!(res.err().unwrap().bad_actors[..] == [1])
 }
 
 // party 2,4 are corrupted
 #[test]
 fn test_sign_n5_t2_ttag4_corrupt_step7_party24() {
     let res = sign(2, 5, 4, vec![0, 2, 3, 4], 7, &[1, 3]);
-    assert!(&res.err().unwrap().bad_actors[..] == &[1, 3])
+    assert!(res.err().unwrap().bad_actors[..] == [1, 3])
 }
 
 fn keygen_t_n_parties(
@@ -473,6 +473,8 @@ fn sign(
     let mut T_vec = Vec::new();
     let mut l_vec = Vec::new();
     let mut T_proof_vec = Vec::new();
+    
+    #[allow(clippy::needless_range_loop)]
     for i in 0..ttag {
         let (T_i, l_i, T_proof_i) = SignKeys::phase3_compute_t_i(&sigma_vec[i]);
         T_vec.push(T_i);
@@ -678,6 +680,7 @@ fn sign(
 
     // test corrupted local s
     if corrupt_step == 7 {
+        #[allow(clippy::needless_range_loop)]
         for i in 0..s_vec.len() {
             if corrupted_parties.iter().any(|&x| x == i) {
                 s_vec[i] = &s_vec[i] + &s_vec[i];

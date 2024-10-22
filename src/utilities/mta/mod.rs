@@ -47,8 +47,8 @@ pub struct MessageB {
 impl MessageA {
     /// Creates a new `messageA` using Alice's Paillier encryption key and `dlog_statements`
     /// - other parties' `h1,h2,N_tilde`s for range proofs.
-    /// If range proofs are not needed (one example is identification of aborts where we
-    /// only want to reconstruct a ciphertext), `dlog_statements` can be an empty slice.
+    ///   If range proofs are not needed (one example is identification of aborts where we
+    ///   only want to reconstruct a ciphertext), `dlog_statements` can be an empty slice.
     pub fn a(
         a: &Scalar<Secp256k1>,
         alice_ek: &EncryptionKey,

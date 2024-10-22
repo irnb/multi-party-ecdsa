@@ -646,6 +646,7 @@ impl Round6 {
 
 #[derive(Clone)]
 pub struct CompletedOfflineStage {
+    #[allow(dead_code)]
     i: u16,
     local_key: LocalKey<Secp256k1>,
     sign_keys: SignKeys,
@@ -728,3 +729,4 @@ trait IteratorExt: Iterator {
 }
 
 impl<I> IteratorExt for I where I: Iterator {}
+
