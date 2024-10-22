@@ -25,6 +25,23 @@ use common::{
     broadcast, check_sig, poll_for_broadcasts, poll_for_p2p, postb, sendp2p, Params, PartySignup,
 };
 
+// Add this type alias before the main function
+type KeygenOutput = (
+    Keys,
+    SharedKeys,
+    u16,
+    Vec<VerifiableSS<Secp256k1>>,
+    Vec<EncryptionKey>,
+    Point<Secp256k1>,
+);
+
+// Add this type alias near the top of the file, after other imports
+type Phase5Proof = (
+    Phase5ADecom1,
+    HomoELGamalProof<Secp256k1, Sha256>,
+    DLogProof<Secp256k1, Sha256>,
+);
+
 #[allow(clippy::cognitive_complexity)]
 fn main() {
     if env::args().nth(4).is_some() {
@@ -45,14 +62,7 @@ fn main() {
     // read key file
     let data = fs::read_to_string(env::args().nth(2).unwrap())
         .expect("Unable to load keys, did you run keygen first? ");
-    let (party_keys, shared_keys, party_id, vss_scheme_vec, paillier_key_vector, y_sum): (
-        Keys,
-        SharedKeys,
-        u16,
-        Vec<VerifiableSS<Secp256k1>>,
-        Vec<EncryptionKey>,
-        Point<Secp256k1>,
-    ) = serde_json::from_str(&data).unwrap();
+    let (party_keys, shared_keys, party_id, vss_scheme_vec, paillier_key_vector, y_sum): KeygenOutput = serde_json::from_str(&data).unwrap();
 
     //read parameters:
     let data = fs::read_to_string("params.json")
@@ -61,8 +71,12 @@ fn main() {
     let THRESHOLD = params.threshold.parse::<u16>().unwrap();
 
     //signup:
-    let (party_num_int, uuid) = match signup(&client).unwrap() {
-        PartySignup { number, uuid } => (number, uuid),
+    let (party_num_int, uuid) = match signup(&client) {
+        Ok(PartySignup { number, uuid }) => (number, uuid),
+        Err(e) => {
+            eprintln!("Error during signup: {:?}", e);
+            std::process::exit(1);
+        }
     };
     println!("number: {:?}, uuid: {:?}", party_num_int, uuid);
 
@@ -365,11 +379,7 @@ fn main() {
         uuid.clone(),
     );
 
-    let mut decommit5a_and_elgamal_and_dlog_vec: Vec<(
-        Phase5ADecom1,
-        HomoELGamalProof<Secp256k1, Sha256>,
-        DLogProof<Secp256k1, Sha256>,
-    )> = Vec::new();
+    let mut decommit5a_and_elgamal_and_dlog_vec: Vec<Phase5Proof> = Vec::new();
     format_vec_from_reads(
         &round6_ans_vec,
         party_num_int as usize,
@@ -523,9 +533,9 @@ fn format_vec_from_reads<'a, T: serde::Deserialize<'a> + Clone>(
     }
 }
 
-pub fn signup(client: &Client) -> Result<PartySignup, ()> {
+pub fn signup(client: &Client) -> Result<PartySignup, Box<dyn std::error::Error>> {
     let key = "signup-sign".to_string();
 
     let res_body = postb(client, "signupsign", key).unwrap();
-    serde_json::from_str(&res_body).unwrap()
+    Ok(serde_json::from_str(&res_body)?)
 }

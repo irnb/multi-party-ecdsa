@@ -20,6 +20,7 @@ pub type Key = String;
 #[allow(dead_code)]
 pub const AES_KEY_BYTES_LEN: usize = 32;
 
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct AEAD {
     pub ciphertext: Vec<u8>,
@@ -101,6 +102,7 @@ where
     None
 }
 
+#[allow(clippy::result_unit_err)]
 pub fn broadcast(
     client: &Client,
     party_num: u16,
@@ -115,6 +117,7 @@ pub fn broadcast(
     serde_json::from_str(&res_body).unwrap()
 }
 
+#[allow(clippy::result_unit_err)]
 pub fn sendp2p(
     client: &Client,
     party_from: u16,

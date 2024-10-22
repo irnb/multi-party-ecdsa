@@ -166,7 +166,7 @@ impl<'r> FromRequest<'r> for LastEventId {
         match header {
             Some(Ok(last_seen_msg)) => Outcome::Success(LastEventId(Some(last_seen_msg))),
             Some(Err(_parse_err)) => {
-                Outcome::Failure((Status::BadRequest, "last seen msg id is not valid"))
+                Outcome::Error((Status::BadRequest, "last seen msg id is not valid"))
             }
             None => Outcome::Success(LastEventId(None)),
         }

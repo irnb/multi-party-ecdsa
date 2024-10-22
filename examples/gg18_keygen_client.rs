@@ -48,9 +48,8 @@ fn main() {
     };
 
     //signup:
-    let (party_num_int, uuid) = match signup(&client).unwrap() {
-        PartySignup { number, uuid } => (number, uuid),
-    };
+    let PartySignup { number, uuid } = signup(&client).unwrap();
+    let (party_num_int, uuid) = (number, uuid);
     println!("number: {:?}, uuid: {:?}", party_num_int, uuid);
 
     let party_keys = Keys::create(party_num_int);
@@ -263,9 +262,9 @@ fn main() {
     fs::write(env::args().nth(2).unwrap(), keygen_json).expect("Unable to save !");
 }
 
-pub fn signup(client: &Client) -> Result<PartySignup, ()> {
+pub fn signup(client: &Client) -> Result<PartySignup, Box<dyn std::error::Error>> {
     let key = "signup-keygen".to_string();
 
     let res_body = postb(client, "signupkeygen", key).unwrap();
-    serde_json::from_str(&res_body).unwrap()
+    Ok(serde_json::from_str(&res_body)?)
 }
